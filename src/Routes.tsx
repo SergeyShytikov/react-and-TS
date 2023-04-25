@@ -1,13 +1,13 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet, useOutletContext } from 'react-router-dom';
 import { ProductsPage } from './pages/ProductsPage';
 import { ProductPage } from './pages/ProductPage';
 import { Header } from './Header';
-import App from './App';
 import { ErrorPage } from './pages/ErrorPage';
 import { HomePage } from './pages/HomePage';
 import { lazy, Suspense } from 'react';
+import { AppReducer } from './AppReducer';
 
-const AdminPage = lazy(() => import('./pages/AdminPage'));
+const AdminPageWrapper = lazy(() => import('./pages/AdminPageWrapper'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
@@ -15,7 +15,7 @@ const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <AppReducer />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -30,18 +30,18 @@ const router = createBrowserRouter([
         path: 'products/:id',
         element: <ProductPage />,
       },
-      // {
-      //   path: '/admin',
-      //   element: (
-      //     <Suspense
-      //       fallback={
-      //         <div className="text-center p-5 text-xl text-slate-00">Loading admin panel...</div>
-      //       }
-      //     >
-      //       <AdminPage permissions={permissions} />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: '/admin',
+        element: (
+          <Suspense
+            fallback={
+              <div className="text-center p-5 text-xl text-slate-00">Loading admin panel...</div>
+            }
+          >
+            <AdminPageWrapper />
+          </Suspense>
+        ),
+      },
       {
         path: 'services',
         element: (
@@ -82,7 +82,15 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <Header />,
+    element: (
+      <Header
+        user={undefined}
+        onSignInClick={function (): void {
+          throw new Error('Function not implemented.');
+        }}
+        loading={false}
+      />
+    ),
   },
 ]);
 
