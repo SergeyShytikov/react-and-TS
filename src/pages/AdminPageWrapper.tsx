@@ -8,6 +8,6 @@ type Props = {
 };
 
 export default function AdminPageWrapper() {
-  const [user, permissions] = useOutletContext<Props>();
+  const { user, permissions } = useOutletContext<Props>();
   return <AdminPage user={user} permissions={permissions} />;
 }

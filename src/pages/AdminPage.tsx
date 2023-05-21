@@ -5,7 +5,7 @@ type Props = {
   permissions: undefined | string[];
 };
 
-function Greeting({ user }) {
+function Greeting({ user }: User) {
   return (
     <p className="mt-8 text-xl text-center">{user ? `Hello ${user.name}!` : 'Please sign in'}</p>
   );

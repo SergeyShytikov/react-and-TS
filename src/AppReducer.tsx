@@ -75,9 +75,7 @@ export function AppReducer() {
   return (
     <div>
       <Header user={user} onSignInClick={handleSignInClick} loading={loading} />
-      {/* <AdminPage user={user} permissions={permissions} />
-      className="max-w-7xl mx-auto px-4"> */}
-      <Outlet context={[user, permissions]} />
+      <Outlet context={{ user, permissions }} />
     </div>
   );
 }
