@@ -5,9 +5,10 @@ import { Header } from './Header';
 import { ErrorPage } from './pages/ErrorPage';
 import { HomePage } from './pages/HomePage';
 import { lazy, Suspense } from 'react';
-import { AppReducer } from './AppReducer';
+import { AppProvider } from './AppContext';
+// import { AdminPage } from './pages/AdminPage';
 
-const AdminPageWrapper = lazy(() => import('./pages/AdminPageWrapper'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
@@ -15,7 +16,18 @@ const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <AppReducer />,
+    element: (
+      <AppProvider>
+        <Header
+          user={undefined}
+          onSignInClick={function (): void {
+            throw new Error('Function not implemented.');
+          }}
+          loading={false}
+        />
+        <Outlet />
+      </AppProvider>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
@@ -35,10 +47,10 @@ const router = createBrowserRouter([
         element: (
           <Suspense
             fallback={
-              <div className="text-center p-5 text-xl text-slate-00">Loading admin panel...</div>
+              <div className="text-center p-5 text-xl text-slate-00">Loading services...</div>
             }
           >
-            <AdminPageWrapper />
+            <AdminPage />
           </Suspense>
         ),
       },
@@ -79,18 +91,6 @@ const router = createBrowserRouter([
         ),
       },
     ],
-  },
-  {
-    path: '/',
-    element: (
-      <Header
-        user={undefined}
-        onSignInClick={function (): void {
-          throw new Error('Function not implemented.');
-        }}
-        loading={false}
-      />
-    ),
   },
 ]);
 

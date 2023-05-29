@@ -1,11 +1,12 @@
-import { User } from './api/authenticate';
+import { User } from '../api/authenticate';
+import { useAppContext } from '../AppContext';
 
 type Props = {
   user: undefined | User;
   permissions: undefined | string[];
 };
 
-function Greeting({ user }: User) {
+function Greeting({ user }: Props) {
   return (
     <p className="mt-8 text-xl text-center">{user ? `Hello ${user.name}!` : 'Please sign in'}</p>
   );
@@ -23,9 +24,10 @@ function hasAdminPermission(permissions: string | string[]) {
   return permissions && permissions.includes('admin');
 }
 
-export function AdminPage({ user, permissions }: Props) {
+export default function AdminPage({}) {
+  const { user, permissions } = useAppContext();
   if (permissions === undefined) {
-    return <Greeting user={user} />;
+    return <Greeting user={user} permissions={undefined} />;
   }
 
   return hasAdminPermission(permissions) ? <AdminContent /> : <InsufficientPermissions />;

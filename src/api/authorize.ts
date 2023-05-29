@@ -1,3 +1,3 @@
 export function authorize(id: string): Promise<string[]> {
-  return new Promise((resolve) => setTimeout(() => resolve(['nonAdmin']), 1000));
+  return new Promise((resolve) => setTimeout(() => resolve(['admin']), 1000));
 }

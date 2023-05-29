@@ -1,8 +1,10 @@
 import reactLogo from './assets/react.svg';
 import viteLogo from './assets/vite.svg';
 import { NavLink, Link, useSearchParams, Form } from 'react-router-dom';
-import { FormEvent } from 'react';
 import { User } from './api/authenticate';
+import { authenticate } from './api/authenticate';
+import { authorize } from './api/authorize';
+import { useAppContext } from './AppContext';
 
 type Props = {
   user: undefined | User;
@@ -10,8 +12,27 @@ type Props = {
   loading: boolean;
 };
 
-export function Header({ user, onSignInClick, loading }: Props) {
+export function Header({}) {
   const [searchParams] = useSearchParams();
+  const { user, loading, dispatch } = useAppContext();
+
+  async function handleSignInClick() {
+    console.log('click');
+    dispatch({ type: 'authenticate' });
+    const authenticatedUser = await authenticate();
+    dispatch({
+      type: 'authenticated',
+      user: authenticatedUser,
+    });
+    if (authenticatedUser !== undefined) {
+      dispatch({ type: 'authorize' });
+      const authorizedPermissions = await authorize(authenticatedUser.id);
+      dispatch({
+        type: 'authorized',
+        permissions: authorizedPermissions,
+      });
+    }
+  }
 
   // function handleSearchSubmit(e: FormEvent<HTMLFormElement>) {
   //   e.preventDefault();
@@ -25,7 +46,7 @@ export function Header({ user, onSignInClick, loading }: Props) {
         <span className="ml-auto font-bold">{user.name} has signed in</span>
       ) : (
         <button
-          onClick={onSignInClick}
+          onClick={handleSignInClick}
           className="whitespace-nowrap inline-flex items-
             center justify-center ml-auto px-4 py-2 w-36
             border border-transparent rounded-md
