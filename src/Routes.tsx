@@ -6,7 +6,8 @@ import { ErrorPage } from './pages/ErrorPage';
 import { HomePage } from './pages/HomePage';
 import { lazy, Suspense } from 'react';
 import { AppProvider } from './AppContext';
-// import { AdminPage } from './pages/AdminPage';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
@@ -17,7 +18,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <AppProvider>
+      <Provider store={store}>
         <Header
           user={undefined}
           onSignInClick={function (): void {
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
           loading={false}
         />
         <Outlet />
-      </AppProvider>
+      </Provider>
     ),
     errorElement: <ErrorPage />,
     children: [

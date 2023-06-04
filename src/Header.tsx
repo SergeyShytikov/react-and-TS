@@ -4,7 +4,14 @@ import { NavLink, Link, useSearchParams, Form } from 'react-router-dom';
 import { User } from './api/authenticate';
 import { authenticate } from './api/authenticate';
 import { authorize } from './api/authorize';
-import { useAppContext } from './AppContext';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState } from './store/store';
+import {
+  authenticateAction,
+  authenticatedAction,
+  autorizeAction,
+  autorizedAction,
+} from './store/userSlice';
 
 type Props = {
   user: undefined | User;
@@ -14,23 +21,19 @@ type Props = {
 
 export function Header({}) {
   const [searchParams] = useSearchParams();
-  const { user, loading, dispatch } = useAppContext();
+  const user = useSelector((state: RootState) => state.user.user);
+  const loading = useSelector((state: RootState) => state.user.loading);
+  const dispatch = useDispatch();
 
   async function handleSignInClick() {
     console.log('click');
-    dispatch({ type: 'authenticate' });
+    dispatch(authenticateAction());
     const authenticatedUser = await authenticate();
-    dispatch({
-      type: 'authenticated',
-      user: authenticatedUser,
-    });
+    dispatch(authenticatedAction(authenticatedUser));
     if (authenticatedUser !== undefined) {
-      dispatch({ type: 'authorize' });
+      dispatch(autorizeAction());
       const authorizedPermissions = await authorize(authenticatedUser.id);
-      dispatch({
-        type: 'authorized',
-        permissions: authorizedPermissions,
-      });
+      dispatch(autorizedAction(authorizedPermissions));
     }
   }
 

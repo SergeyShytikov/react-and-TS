@@ -1,5 +1,6 @@
 import { User } from '../api/authenticate';
-import { useAppContext } from '../AppContext';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 type Props = {
   user: undefined | User;
@@ -25,7 +26,9 @@ function hasAdminPermission(permissions: string | string[]) {
 }
 
 export default function AdminPage({}) {
-  const { user, permissions } = useAppContext();
+  const user = useSelector((state: RootState) => state.user.user);
+  const permissions = useSelector((state: RootState) => state.user.permissions);
+
   if (permissions === undefined) {
     return <Greeting user={user} permissions={undefined} />;
   }
