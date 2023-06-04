@@ -114,6 +114,15 @@ export function Header({}: Props) {
         >
           Contact form
         </NavLink>
+        <NavLink
+          to="blog"
+          className={({ isActive }) =>
+            `text-white no-underline p-1 pb-0.5 border-solid
+        border-b-2 ${isActive ? 'border-white' : 'border-transparent'}`
+          }
+        >
+          Blog
+        </NavLink>
       </nav>
     </header>
   );
