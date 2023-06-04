@@ -19,7 +19,7 @@ type Props = {
   loading: boolean;
 };
 
-export function Header({}) {
+export function Header({}: Props) {
   const [searchParams] = useSearchParams();
   const user = useSelector((state: RootState) => state.user.user);
   const loading = useSelector((state: RootState) => state.user.loading);
