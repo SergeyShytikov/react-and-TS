@@ -30,7 +30,6 @@ export function assertIsPosts(postsData: unknown): asserts postsData is PostData
 }
 
 export async function getPosts() {
-  console.log(import.meta.env.VITE_API_URL);
   const response = await fetch(import.meta.env.VITE_API_URL!);
   const body = (await response.json()) as unknown;
   console.log(body);
