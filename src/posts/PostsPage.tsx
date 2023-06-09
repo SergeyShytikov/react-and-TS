@@ -1,32 +1,48 @@
-import { useEffect, useState } from 'react';
-import { getPosts } from './getPosts';
+import { useEffect, useState, Suspense } from 'react';
+import { assertIsPosts } from './getPosts';
 import { PostData, NewPostData } from './types';
 import { PostsList } from './PostsList';
 import { savePost } from './savePost';
 import { NewPostForm } from './NewPostForm';
+import { useLoaderData, Await } from 'react-router-dom';
+
+type Data = {
+  posts: PostData[];
+};
+export function assertIsData(data: unknown): asserts data is Data {
+  if (typeof data !== 'object') {
+    throw new Error("Data isn't an object");
+  }
+  if (data === null) {
+    throw new Error('Data is null');
+  }
+  if (!('posts' in data)) {
+    throw new Error("data doesn't contain posts");
+  }
+}
 
 export default function PostsPage() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [posts, setPosts] = useState<PostData[]>([]);
-  useEffect(() => {
-    let cancel = false;
-    getPosts().then((data) => {
-      if (!cancel) {
-        setPosts(data);
-        setIsLoading(false);
-      }
-    });
-    return () => {
-      cancel = true;
-    };
-  }, []);
+  const data = useLoaderData();
+  assertIsData(data);
+
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [posts, setPosts] = useState<PostData[]>([]);
+  // useEffect(() => {
+  //   let cancel = false;
+  //   getPosts().then((data) => {
+  //     if (!cancel) {
+  //       setPosts(data);
+  //       setIsLoading(false);
+  //     }
+  //   });
+  //   return () => {
+  //     cancel = true;
+  //   };
+  // }, []);
   async function handleSave(NewPostData: NewPostData) {
-    const newPost = await savePost(NewPostData);
-    setPosts([newPost, ...posts]);
+    await savePost(NewPostData);
   }
-  if (isLoading) {
-    return <div className="w-96 mx-auto mt-6">Loading ...</div>;
-  }
+
   return (
     <div className="w-96 mx-auto mt-6">
       <h2
@@ -36,7 +52,14 @@ bold"
         Posts
       </h2>
       <NewPostForm onSave={handleSave} />
-      <PostsList posts={posts} />
+      <Suspense fallback={<div>Fetching...</div>}>
+        <Await resolve={data.posts}>
+          {(posts) => {
+            assertIsPosts(posts);
+            return <PostsList posts={posts} />;
+          }}
+        </Await>
+      </Suspense>
     </div>
   );
 }

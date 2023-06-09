@@ -1,4 +1,10 @@
-import { createBrowserRouter, RouterProvider, Outlet, useOutletContext } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  useOutletContext,
+  defer,
+} from 'react-router-dom';
 import { ProductsPage } from './pages/ProductsPage';
 import { ProductPage } from './pages/ProductPage';
 import { Header } from './Header';
@@ -8,6 +14,7 @@ import { lazy, Suspense } from 'react';
 import { AppProvider } from './AppContext';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
+import { getPosts } from './posts/getPosts';
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
@@ -64,6 +71,7 @@ const router = createBrowserRouter([
             <PostsPage />
           </Suspense>
         ),
+        loader: async () => defer({ posts: getPosts() }),
       },
       {
         path: 'services',
