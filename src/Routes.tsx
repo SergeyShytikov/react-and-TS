@@ -16,6 +16,7 @@ import { AppProvider } from './AppContext';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { getPosts } from './posts/getPosts';
+// import { PostsPage } from './posts/PostsPage';
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
@@ -23,6 +24,13 @@ const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
 const PostsPage = lazy(() => import('./posts/PostsPage'));
 
 const queryClient = new QueryClient();
+export const postsLoader = async () => {
+  const existingData = queryClient.getQueryData(['postsData']);
+  if (existingData) {
+    return defer({ posts: existingData });
+  }
+  return defer({ posts: queryClient.fetchQuery(['postsData'], getPosts) });
+};
 
 const router = createBrowserRouter([
   {
@@ -74,7 +82,7 @@ const router = createBrowserRouter([
             <PostsPage />
           </Suspense>
         ),
-        loader: async () => defer({ posts: getPosts() }),
+        loader: postsLoader,
       },
       {
         path: 'services',
