@@ -22,6 +22,7 @@ const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
 const PostsPage = lazy(() => import('./posts/PostsPage'));
+const GithubPage = lazy(() => import('../src/pages/GithubPage'));
 
 const queryClient = new QueryClient();
 export const postsLoader = async () => {
@@ -93,6 +94,18 @@ const router = createBrowserRouter([
             }
           >
             <ServicesPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'github',
+        element: (
+          <Suspense
+            fallback={
+              <div className="text-center p-5 text-xl text-slate-00">Loading services...</div>
+            }
+          >
+            <GithubPage />
           </Suspense>
         ),
       },
