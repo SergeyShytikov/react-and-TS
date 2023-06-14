@@ -12,17 +12,16 @@ import { Header } from './Header';
 import { ErrorPage } from './pages/ErrorPage';
 import { HomePage } from './pages/HomePage';
 import { lazy, Suspense } from 'react';
-import { AppProvider } from './AppContext';
+
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { getPosts } from './posts/getPosts';
-// import { PostsPage } from './posts/PostsPage';
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
 const PostsPage = lazy(() => import('./posts/PostsPage'));
-const GithubPage = lazy(() => import('../src/pages/GithubPage'));
+const GithubPage = lazy(() => import('./pages/repoPage/GithubPage'));
 
 const queryClient = new QueryClient();
 export const postsLoader = async () => {

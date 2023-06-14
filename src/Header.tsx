@@ -26,7 +26,6 @@ export function Header({}: Props) {
   const dispatch = useDispatch();
 
   async function handleSignInClick() {
-    console.log('click');
     dispatch(authenticateAction());
     const authenticatedUser = await authenticate();
     dispatch(authenticatedAction(authenticatedUser));
@@ -130,7 +129,7 @@ export function Header({}: Props) {
         border-b-2 ${isActive ? 'border-white' : 'border-transparent'}`
           }
         >
-          Github
+          Github search
         </NavLink>
       </nav>
     </header>

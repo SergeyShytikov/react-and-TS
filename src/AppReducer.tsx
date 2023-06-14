@@ -1,6 +1,5 @@
 import { useReducer } from 'react';
 import { Header } from './Header';
-import { AdminPage } from './pages/AdminPage';
 import { authenticate, User } from './api/authenticate';
 import { authorize } from './api/authorize';
 import { Outlet } from 'react-router-dom';
