@@ -6,13 +6,13 @@ import {
   defer,
 } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { ProductsPage } from './pages/ProductsPage';
 import { ProductPage } from './pages/ProductPage';
 import { Header } from './Header';
 import { ErrorPage } from './pages/ErrorPage';
 import { HomePage } from './pages/HomePage';
 import { lazy, Suspense } from 'react';
-
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { getPosts } from './posts/getPosts';
@@ -23,15 +23,22 @@ const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
 const PostsPage = lazy(() => import('./posts/PostsPage'));
 const GithubPage = lazy(() => import('./pages/repoPage/GithubPage'));
 
-const queryClient = new QueryClient();
+const reactQueryClient = new QueryClient();
+const queryClient = new ApolloClient({
+  uri: import.meta.env.VITE_GITHUB_URL!,
+  cache: new InMemoryCache(),
+  headers: {
+    Authotization: `bearer ${import.meta.env.VITE_GITHUB_PAT}`,
+  },
+});
+
 export const postsLoader = async () => {
-  const existingData = queryClient.getQueryData(['postsData']);
+  const existingData = reactQueryClient.getQueryData(['postsData']);
   if (existingData) {
     return defer({ posts: existingData });
   }
-  return defer({ posts: queryClient.fetchQuery(['postsData'], getPosts) });
+  return defer({ posts: reactQueryClient.fetchQuery(['postsData'], getPosts) });
 };
-
 const router = createBrowserRouter([
   {
     path: '/',
@@ -138,8 +145,10 @@ const router = createBrowserRouter([
 
 export function Routes() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <ApolloProvider client={queryClient}>
+      <QueryClientProvider client={reactQueryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </ApolloProvider>
   );
 }

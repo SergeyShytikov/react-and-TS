@@ -1,13 +1,16 @@
-export const STAR_REPO = `
-mutation ($repoId: ID!) {
-  addStar (input: { starrableId: $repoId}) {
-    starrable {
-      stargazers {
-        totalCount
+import { gql } from '@apollo/client';
+
+export const STAR_REPO = gql`
+  mutation ($repoId: ID!) {
+    addStar(input: { starrableId: $repoId }) {
+      starrable {
+        stargazers {
+          totalCount
+        }
       }
     }
   }
-}`;
+`;
 
 export async function starRepo(repoId: string) {
   const response = await fetch(import.meta.env.VITE_GITHUB_URL!, {
@@ -23,4 +26,5 @@ export async function starRepo(repoId: string) {
       Authorization: `bearer ${import.meta.env.VITE_GITHUB_PAT}`,
     },
   });
+  await response.json();
 }

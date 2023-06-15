@@ -1,48 +1,56 @@
-import { getViewer } from '../../api/getViewer';
+import { GET_VIEWER_QUERY } from '../../api/getViewer';
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getRepo } from '../../api/getRepo';
-import { starRepo } from '../../api/starRepo';
+import { useQuery } from '@apollo/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { GET_REPO } from '../../api/getRepo';
+import { STAR_REPO } from '../../api/starRepo';
 import { RepoData, SearchCriteria } from '../../api/types';
 import { SearchRepoForm } from './SearchRepoForm';
 import { FoundRepo } from './FoundRepo';
 import { StarRepoButton } from './StarRepoButton';
-
+import { useLazyQuery, useApolloClient } from '@apollo/client';
+import { useMutation as useApolloMutation } from '@apollo/client';
 export default function GithubPage() {
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteria | undefined>();
-  const { data } = useQuery(
-    ['repo', searchCriteria],
-    () => getRepo(searchCriteria as SearchCriteria),
-    {
-      enabled: searchCriteria !== undefined,
-    },
-  );
+  const [getRepo, { data }] = useLazyQuery(GET_REPO);
+  // const { data } = useQuery(
+  //   ['repo', searchCriteria],
+  //   () => getRepo(searchCriteria as SearchCriteria),
+  //   {
+  //     enabled: searchCriteria !== undefined,
+  //   },
+  // );
+  const apolloQueryClient = useApolloClient();
   const queryClient = useQueryClient();
-  const { mutate } = useMutation(starRepo, {
-    onSuccess: () => {
-      queryClient.setQueryData<RepoData>(['repo', searchCriteria], (repo) => {
-        if (repo === undefined) {
-          return undefined;
-        }
-        return {
-          ...repo,
-          viewerHasStarred: true,
-        };
+  const [starRepo] = useApolloMutation(STAR_REPO, {
+    onCompleted: () => {
+      apolloQueryClient.cache.writeQuery({
+        query: GET_REPO,
+        data: {
+          repository: {
+            ...data.repository,
+            viewerHasStarred: true,
+          },
+        },
+        variables: searchCriteria,
       });
     },
   });
-  const { isLoading, data: viewerData } = useQuery(['viewer'], getViewer);
+  const { loading: isLoading, data: viewerData } = useQuery(GET_VIEWER_QUERY);
   if (isLoading || viewerData === undefined) {
     return <div>...</div>;
   }
 
   function handleSearch(search: SearchCriteria) {
+    getRepo({
+      variables: { ...search },
+    });
     setSearchCriteria(search);
   }
 
   function handleStarClick() {
     if (data) {
-      mutate(data.repository.id);
+      starRepo({ variables: { repoId: data.repository.id } });
     }
   }
 
