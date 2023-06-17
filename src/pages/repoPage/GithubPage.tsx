@@ -1,18 +1,24 @@
-import { GET_VIEWER_QUERY } from '../../api/getViewer';
 import { useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useLazyQuery, useApolloClient, useMutation } from '@apollo/client';
+// import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { GET_VIEWER_QUERY } from '../../api/getViewer';
 import { GET_REPO } from '../../api/getRepo';
 import { STAR_REPO } from '../../api/starRepo';
 import { RepoData, SearchCriteria } from '../../api/types';
 import { SearchRepoForm } from './SearchRepoForm';
 import { FoundRepo } from './FoundRepo';
 import { StarRepoButton } from './StarRepoButton';
-import { useLazyQuery, useApolloClient } from '@apollo/client';
-import { useMutation as useApolloMutation } from '@apollo/client';
-export default function GithubPage() {
+
+export function GithubPage() {
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteria | undefined>();
+
+  const { loading: isLoading, data: viewerData } = useQuery(GET_VIEWER_QUERY);
+  if (isLoading || viewerData === undefined) {
+    return <div>...</div>;
+  }
+
   const [getRepo, { data }] = useLazyQuery(GET_REPO);
+
   // const { data } = useQuery(
   //   ['repo', searchCriteria],
   //   () => getRepo(searchCriteria as SearchCriteria),
@@ -21,8 +27,8 @@ export default function GithubPage() {
   //   },
   // );
   const apolloQueryClient = useApolloClient();
-  const queryClient = useQueryClient();
-  const [starRepo] = useApolloMutation(STAR_REPO, {
+  // const queryClient = useQueryClient();
+  const [starRepo] = useMutation(STAR_REPO, {
     onCompleted: () => {
       apolloQueryClient.cache.writeQuery({
         query: GET_REPO,
@@ -36,10 +42,6 @@ export default function GithubPage() {
       });
     },
   });
-  const { loading: isLoading, data: viewerData } = useQuery(GET_VIEWER_QUERY);
-  if (isLoading || viewerData === undefined) {
-    return <div>...</div>;
-  }
 
   function handleSearch(search: SearchCriteria) {
     getRepo({

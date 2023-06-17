@@ -6,7 +6,7 @@ import {
   defer,
 } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+// import { ApolloProvider } from '@apollo/client';
 import { ProductsPage } from './pages/ProductsPage';
 import { ProductPage } from './pages/ProductPage';
 import { Header } from './Header';
@@ -16,21 +16,16 @@ import { lazy, Suspense } from 'react';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { getPosts } from './posts/getPosts';
+import { GithubPage } from './pages/repoPage/GithubPage';
+// import { apolloClient } from './client';
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
 const PostsPage = lazy(() => import('./posts/PostsPage'));
-const GithubPage = lazy(() => import('./pages/repoPage/GithubPage'));
+// const GithubPage = lazy(() => import('./pages/repoPage/GithubPage'));
 
 const reactQueryClient = new QueryClient();
-const queryClient = new ApolloClient({
-  uri: import.meta.env.VITE_GITHUB_URL!,
-  cache: new InMemoryCache(),
-  headers: {
-    Authotization: `bearer ${import.meta.env.VITE_GITHUB_PAT}`,
-  },
-});
 
 export const postsLoader = async () => {
   const existingData = reactQueryClient.getQueryData(['postsData']);
@@ -92,7 +87,7 @@ const router = createBrowserRouter([
         loader: postsLoader,
       },
       {
-        path: 'services',
+        path: '/services',
         element: (
           <Suspense
             fallback={
@@ -104,16 +99,17 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'github',
-        element: (
-          <Suspense
-            fallback={
-              <div className="text-center p-5 text-xl text-slate-00">Loading services...</div>
-            }
-          >
-            <GithubPage />
-          </Suspense>
-        ),
+        path: '/github',
+
+        element: <GithubPage />,
+        // (
+        //   <Suspense
+        //     fallback={
+        //       <div className="text-center p-5 text-xl text-slate-00">Loading services...</div>
+        //     }
+        //   >
+        //   </Suspense>
+        // ),
       },
       {
         path: '/form',
@@ -145,10 +141,10 @@ const router = createBrowserRouter([
 
 export function Routes() {
   return (
-    <ApolloProvider client={queryClient}>
-      <QueryClientProvider client={reactQueryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </ApolloProvider>
+    <QueryClientProvider client={reactQueryClient}>
+      {/* <ApolloProvider client={apolloClient}>
+      </ApolloProvider> */}
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   );
 }
