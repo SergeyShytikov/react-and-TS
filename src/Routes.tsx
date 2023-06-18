@@ -17,6 +17,7 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { getPosts } from './posts/getPosts';
 import { GithubPage } from './pages/repoPage/GithubPage';
+import { CheckListPage } from './pages/checklist/CheckListPage';
 // import { apolloClient } from './client';
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
       {
         path: 'products',
         element: <ProductsPage />,
+      },
+      {
+        path: 'checklist',
+        element: <CheckListPage />,
       },
       {
         path: 'products/:id',
