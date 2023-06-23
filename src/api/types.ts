@@ -17,3 +17,4 @@ export type RepoData = {
     };
   };
 };
+export type IdValue = string | number;

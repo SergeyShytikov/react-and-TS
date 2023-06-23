@@ -10,7 +10,7 @@ export function CheckListPage() {
           { id: 3, name: 'Bill', role: 'Developer' },
           { id: 4, name: 'Tara', role: 'Developer' },
           { id: 5, name: 'Sara', role: 'UX' },
-          { id: 6, name: 'Derik', role: 'QA' },
+          { id: 6, name: 'Derik', role: 'QAAAA' },
         ]}
         id="id"
         primary="name"
