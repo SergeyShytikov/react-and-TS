@@ -8,6 +8,8 @@ type Props<Data> = {
   primary: keyof Data;
   secondary: keyof Data;
   renderItem?: (item: Data) => ReactNode;
+  checkedIds?: IdValue[];
+  onCheckedIdsChange?: (checkedIds: IdValue[]) => void;
 } & ComponentPropsWithoutRef<'ul'>;
 
 export function CheckList<Data>({
@@ -16,9 +18,14 @@ export function CheckList<Data>({
   primary,
   secondary,
   renderItem,
+  checkedIds,
+  onCheckedIdsChange,
   ...ulProps
 }: Props<Data>) {
-  const { checkedIds, handleCheckChange } = useChecked();
+  const { resolvedCheckedIds, handleCheckChange } = useChecked({
+    checkedIds,
+    onCheckedIdsChange,
+  });
 
   // const [checkedIds, setCheckedIds] = useState<IdValue[]>([]);
   // const handleCheckChange = (checkedId: IdValue) => () => {
@@ -53,7 +60,7 @@ export function CheckList<Data>({
             <label className="flex items-center">
               <input
                 type="checkbox"
-                checked={checkedIds.includes(idValue)}
+                checked={resolvedCheckedIds.includes(idValue)}
                 onChange={handleCheckChange(idValue)}
               />
               <div className="ml-2">

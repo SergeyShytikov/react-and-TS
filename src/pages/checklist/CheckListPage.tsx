@@ -1,8 +1,20 @@
+import { useState } from 'react';
 import { CheckList } from './CheckList';
+import { IdValue } from '../../api/types';
 
 export function CheckListPage() {
+  const [checkedId, setCheckedId] = useState<IdValue | null>(null);
+  function handleCheckedIdsChange(newCheckedIds: IdValue[]) {
+    const newCheckedIdArr = newCheckedIds.filter((id) => id !== checkedId);
+    if (newCheckedIdArr.length === 1) {
+      setCheckedId(newCheckedIdArr[0]);
+    } else {
+      setCheckedId(null);
+    }
+  }
+
   return (
-    <div>
+    <>
       <CheckList
         data={[
           { id: 1, name: 'Lucy', role: 'Manager' },
@@ -20,6 +32,9 @@ export function CheckListPage() {
           maxHeight: '380px',
           overflowY: 'auto',
         }}
+        checkedIds={checkedId === null ? [] : [checkedId]}
+        onCheckedIdsChange={handleCheckedIdsChange}
+
         // renderItem={(item) => (
         //   <li
         //     key={item.id}
@@ -31,6 +46,6 @@ export function CheckListPage() {
         //   </li>
         // )}
       />
-    </div>
+    </>
   );
 }
